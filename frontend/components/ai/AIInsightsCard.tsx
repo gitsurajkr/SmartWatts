@@ -5,16 +5,22 @@ import { Sparkles, AlertTriangle, Lightbulb, Info, RefreshCw } from 'lucide-reac
 import { useAIStore } from '@/lib/aiStore';
 import { useStore } from '@/lib/store';
 
-const severityColors = {
-  high: 'text-red-500 bg-red-500/10 border-red-500/20',
-  medium: 'text-orange-500 bg-orange-500/10 border-orange-500/20',
-  low: 'text-blue-500 bg-blue-500/10 border-blue-500/20',
+const severityStyles = {
+  high: 'border-destructive/20 bg-destructive/5',
+  medium: 'border-[#ffab40]/20 bg-[#ffab40]/5',
+  low: 'border-primary/20 bg-primary/5',
 };
 
 const typeIcons = {
   warning: AlertTriangle,
   tip: Lightbulb,
   info: Info,
+};
+
+const iconColors = {
+  high: 'text-destructive',
+  medium: 'text-[#ffab40]',
+  low: 'text-primary',
 };
 
 export default function AIInsightsCard() {
@@ -31,16 +37,18 @@ export default function AIInsightsCard() {
   if (appliances.length === 0) return null;
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6">
+    <div className="glass-card rounded-2xl p-6 animate-fade-up">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold text-foreground">AI Insights</h2>
+          <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <h2 className="text-lg font-bold text-foreground">AI Insights</h2>
         </div>
         <button
           onClick={() => fetchInsights(true)}
           disabled={insightsLoading}
-          className="p-2 hover:bg-muted rounded-lg transition-colors disabled:opacity-40"
+          className="p-2 hover:bg-muted rounded-xl transition-all duration-300 disabled:opacity-40 hover:scale-110"
           aria-label="Refresh insights"
         >
           <RefreshCw className={`w-4 h-4 text-muted-foreground ${insightsLoading ? 'animate-spin' : ''}`} />
@@ -60,11 +68,15 @@ export default function AIInsightsCard() {
         <div className="space-y-3">
           {insights.map((insight, idx) => {
             const Icon = typeIcons[insight.type] || Info;
-            const colors = severityColors[insight.severity] || severityColors.low;
+            const styles = severityStyles[insight.severity] || severityStyles.low;
+            const iconColor = iconColors[insight.severity] || iconColors.low;
             return (
-              <div key={idx} className={`p-3 rounded-xl border ${colors}`}>
+              <div
+                key={idx}
+                className={`p-3 rounded-xl border ${styles} transition-all duration-300 hover:scale-[1.02] animate-fade-up stagger-${idx + 1}`}
+              >
                 <div className="flex gap-3">
-                  <Icon className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <Icon className={`w-4 h-4 flex-shrink-0 mt-0.5 ${iconColor}`} />
                   <p className="text-sm text-foreground leading-relaxed">{insight.message}</p>
                 </div>
               </div>
